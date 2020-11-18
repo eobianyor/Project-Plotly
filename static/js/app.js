@@ -12,139 +12,187 @@ var nos
 
 //     // -----------------------------------------------------------------------------------------------------------------------------------------------------
 
-// // function metaDataSearchLoop() {
-// d3.json("data/samples.json").then((bbDdata) => {
-//     selectedID = 1260 // Need to remove this once I've got the listener working
-//     Nos = 0
-//     metadataArray = bbDdata.metadata
-//     metadataArray.forEach(entry => {
-//         if (selectedID == metadataArray[Nos].id) {
-//             d3.select('#Demographic_id').text(`ID: ${(MetadataArray[nos].id)}`);
-//             d3.select('#Demographic_ethnicity').text(`Ethnicity: ${MetadataArray[nos].ethnicity}`);
-//             d3.select('#Demographic_gender').text(`Gender: ${MetadataArray[nos].gender}`);
-//             d3.select('#Demographic_age').text(`Age: ${MetadataArray[nos].age}`);
-//             d3.select('#Demographic_location').text(`Location: ${MetadataArray[nos].location}`);
-//             d3.select('#Demographic_bbtype').text(`Bbtype: ${MetadataArray[nos].bbtype}`);
-//             d3.select('#Demographic_wfreq').text(`Wfreq: ${MetadataArray[nos].wfreq}`);
-//         };
-//         nos = nos + 1;
-//     });
-// });
-// // };
+function metaDataSearchLoop(selectedID) {
+    d3.json("data/samples.json").then((bbDdata) => {
+        // selectedID = 1260 // Need to remove this once I've got the listener working
+        selectedIDLocal = selectedID
+        nos = 0
+        metadataArray = bbDdata.metadata
+        metadataArray.forEach(entry => {
+            if (selectedIDLocal == metadataArray[nos].id) {
+                d3.select('#Demographic_id').text(`ID: ${(metadataArray[nos].id)}`);
+                d3.select('#Demographic_ethnicity').text(`Ethnicity: ${metadataArray[nos].ethnicity}`);
+                d3.select('#Demographic_gender').text(`Gender: ${metadataArray[nos].gender}`);
+                d3.select('#Demographic_age').text(`Age: ${metadataArray[nos].age}`);
+                d3.select('#Demographic_location').text(`Location: ${metadataArray[nos].location}`);
+                d3.select('#Demographic_bbtype').text(`Bbtype: ${metadataArray[nos].bbtype}`);
+                d3.select('#Demographic_wfreq').text(`Wfreq: ${metadataArray[nos].wfreq}`);
+            };
+            nos = nos + 1;
+        });
+    });
+};
 
+// metaDataSearchLoop(950)
 // //     // --------------------------------------------------------
 
-// // function plotGraphsLoop() {
-// d3.json("data/samples.json").then((bbDdata) => {
-//     var sampleValuesAll
-//     var otu_idsAll
-//     var otu_labelsAll
-//     var samplesArray
+function plotGraphsLoop(selectedID) {
+    d3.json("data/samples.json").then((bbDdata) => {
+        var sampleValuesAll
+        var otu_idsAll
+        var otu_labelsAll
+        var samplesArray
 
-//     selectedID = 1260 // Need to remove this once I've got the listener working
-//     nos = 0
-//     samplesArray = bbDdata.samples;
-//     samplesArray.forEach(entry => {
-//         if (selectedID == samplesArray[nos].id) {
-//             sampleValuesAll = samplesArray[nos].sample_values;
-//             otu_idsAll = samplesArray[nos].otu_ids;
-//             otu_labelsAll = samplesArray[nos].otu_labels;
-//         };
-//         nos = nos + 1;
-//     });
+        // selectedID = 1260 // Need to remove this once I've got the listener working
+        selectedIDLocal = selectedID
+        nos = 0
+        samplesArray = bbDdata.samples;
+        samplesArray.forEach(entry => {
+            if (selectedIDLocal == samplesArray[nos].id) {
+                sampleValuesAll = samplesArray[nos].sample_values;
+                otu_idsAll = samplesArray[nos].otu_ids;
+                otu_labelsAll = samplesArray[nos].otu_labels;
+            };
+            nos = nos + 1;
+        });
 
-//     var sampleValuesAll
-//     var otu_idsAll
-//     var otu_labelsAll
-//     var sampleValuesTop10
-//     var otu_idsTop10
-//     var otu_labelsTop10
-
-//     // Slice the first 10 objects for plotting
-//     sampleValuesTop10 = sampleValuesAll.slice(0, 10);
-//     otu_idsTop10 = otu_idsAll.slice(0, 10);
-//     otu_labelsTop10 = otu_labelsAll.slice(0, 10);
-
-//     // build bar plot
-//     var trace1 = {
-//         x: sampleValuesTop10,
-//         y: otu_idsTop10,
-//         type: "bar",
-//         orientation: 'h'
-//     };
-
-//     var data = [trace1];
-
-//     var layout = {
-//         title: `Top 10 BB bacteria for ${indvMetadata} `
-//     }
-
-//     Plotly.newPlot("bar", data, layout);
+        var sampleValuesAll
+        var otu_idsAll
+        var otu_labelsAll
+        var sampleValuesTop10
+        var otu_idsTop10
+        var otu_labelsTop10
 
 
-//     // build bubble plot
-//     var trace1 = {
-//         x: otu_idsAll,
-//         y: sampleValuesAll,
-//         mode: "markers",
-//         marker: {
-//             size: sampleValuesAll,
-//             color: 'light blue'
-//         }
-//     };
+        // Slice the first 10 objects for plotting
+        sampleValuesTop10 = sampleValuesAll.slice(0, 10);
+        otu_idsTop10 = otu_idsAll.slice(0, 10);
+        otu_labelsTop10 = otu_labelsAll.slice(0, 10);
 
-//     var data = [trace1];
+        var sampleValuesTop10Sort = sampleValuesTop10.sort((a, b) => b - a);
+        console.log(sampleValuesTop10Sort)
 
-//     var layout = {
-//         title: `BB bacteria for ${indvMetadata} `,
-//         showlegend: false,
+        nos = 0
+        var new_otu_idsTop10
+        otu_idsTop10.forEach(i => {
+            new_otu_idsTop10 = [...otu_idsTop10, `OTU ${otu_idsTop10[nos]}`,];
+            // new_otu_idsTop10.push(`OTU ${otuid}`);
+            // new_otu_idsTop10 = (`OTU ${otuid}`);
+            nos = nos + 1;
+        });
+        console.log(otu_idsTop10)
+        console.log(new_otu_idsTop10)
 
-//     }
+        // build bar plot
+        var trace1 = {
+            x: sampleValuesTop10Sort,
+            y: otu_idsTop10,
+            type: "bar",
+            orientation: 'h',
 
-//     Plotly.newPlot("bubble", data, layout);
-// });
-// // };
+        };
+
+        var data = [trace1];
+
+        var layout = {
+            title: `Top 10 Belly Button bacteria for ${selectedIDLocal} `
+        }
+
+        Plotly.newPlot("bar", data, layout);
+
+
+        // build bubble plot
+        var trace1 = {
+            x: otu_idsAll,
+            y: sampleValuesAll,
+            mode: "markers",
+            marker: {
+                size: sampleValuesAll,
+                color: 'light blue'
+            }
+        };
+
+        var data = [trace1];
+
+        var layout = {
+            title: `Belly Button bacteria for ${selectedIDLocal}`,
+            showlegend: false,
+
+        }
+
+        Plotly.newPlot("bubble", data, layout);
+    });
+};
 
 //     // --------------------------------------------------------
 
+//  EVENT LISTENER AND TO HANDLE A SELECTION
+// Function to handle a selection
+function optionChanged(selectedID) {
+    // d3.event.preventDefault();
+    var selectedID = d3.select("#selDataset").property("value");
+    d3.select("#selDataset").node().value = "";
+    plotGraphsLoop(selectedID)
+    metaDataSearchLoop(selectedID)
+    console.log(selectedID)
+}
 
-//     // --------------------------------------------------------
-
-// //  EVENT LISTENER AND TO HANDLE A SELECTION
-// // Function to handle a selection
-// function optionChanged(selectedID) {
-//     d3.event.preventDefault();
-//     //var selectedID = d3.select("#selDataset").property("value");
-//     // d3.select("#dropdownMenuButton").node().value = "";
-//     console.log(selectedID);
-//     console.log('Its working 2!!!!');
-// }
-
-// // Add event listener for submit button
+// Add event listener for submit button
 // d3.select('#selDataset').on('change', handleSelection);
 
-
-
 //     // -----------------------------------------------------------------------------------------------------------------------------------------------------
-// })
 
-function initilize() {
+// // TO SETUP AN INITIALIZE FUNCTION THAT'LL POPULATE THE DROPDOWN, SELECT A RANDOM DEFAULT ID AND CALL THE PLOT GRAPH AND METADATA FUNCTIONS TO POPULATE LANDING PAGE
+// // 1ST TRY
+function initialize() {
     var selector = d3.select('#selDataset');
 
     d3.json("data/samples.json").then((bbDdata) => {
 
-        var names = bbDdata.names;
+        var idNames = bbDdata.names;
+        // console.log(idNames)
 
-        names.forEach((sample) => {
+        idNames.forEach((sample) => {
             selector
                 .append("option")
-                .append(sample)
+                .text(sample)
                 .property("value", sample);
         });
 
-        //s3eletc a sample from your data and call your build charts and metadata functions.
+        //         // Select a sample from your data and call your build charts and metadata functions.
+        selectedID = idNames[Math.floor(Math.random() * idNames.length)]
+        plotGraphsLoop(selectedID)
+        metaDataSearchLoop(selectedID)
+        console.log(selectedID)
+
     });
+}
 
-};
+initialize()
 
-initilize();
+// };
+
+//2ND TRY
+// function initialize() {
+//     var selector = document.getElementById(selDataset);
+
+//     d3.json("data/samples.json").then((bbDdata) => {
+
+//         var idNames = bbDdata.names;
+//         console.log(idNames)
+//         for (var i = 0; i < idNames.length; i++) {
+//             var option = document.createElement("OPTION"),
+//                 txt = document.createTextNode(idNames[i]);
+//             option.appendChild(txt);
+//             option.setAttribute("value", idNames[i]);
+//             selector.insertBefore(option, select.lastChild);
+//         };
+//         // Select a sample from your data and call your build charts and metadata functions.
+//         selectedID = idNames[Math.floor(Math.random() * idNames.length)]
+//         plotGraphsLoop(selectedID)
+//         metaDataSearchLoop(selectedID)
+//     });
+
+// };
+
+// initialize();
