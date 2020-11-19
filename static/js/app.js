@@ -8,16 +8,17 @@ var otu_labelsTop10
 var indvMetadata
 var selectedID
 var metadataArray
+var wFreq
 var nos
 
-//     // -----------------------------------------------------------------------------------------------------------------------------------------------------
-
+// // // // ----------------------------------------------------------- // // // // 
+// // // //      FUNCTIONS TO PULL AND LOAD DEMOGRAPHIC INFORMATION    // // // //
+// // // // ---------------------------------------------------------- // // // // 
 function metaDataSearchLoop(selectedID) {
-    d3.json("data/samples.json").then((bbDdata) => {
-        // selectedID = 1260 // Need to remove this once I've got the listener working
+    d3.json("data/samples.json").then((bbData) => {
         selectedIDLocal = selectedID
         nos = 0
-        metadataArray = bbDdata.metadata
+        metadataArray = bbData.metadata
         metadataArray.forEach(entry => {
             if (selectedIDLocal == metadataArray[nos].id) {
                 d3.select('#Demographic_id').text(`ID: ${(metadataArray[nos].id)}`);
@@ -30,23 +31,25 @@ function metaDataSearchLoop(selectedID) {
             };
             nos = nos + 1;
         });
+        // console.log(metadataArray)
     });
 };
 
-// metaDataSearchLoop(950)
-// //     // --------------------------------------------------------
-
+// // // // --------------------------------// // // // 
+// // // //      FUNCTION TO PLOT GRAPHS    // // // //
+// // // // --------------------------------// // // // 
 function plotGraphsLoop(selectedID) {
-    d3.json("data/samples.json").then((bbDdata) => {
+    d3.json("data/samples.json").then((bbData) => {
+        // Declare variables 
         var sampleValuesAll
         var otu_idsAll
         var otu_labelsAll
         var samplesArray
 
-        // selectedID = 1260 // Need to remove this once I've got the listener working
+        // Run forEach to get the neccessary arrays needed for plots
         selectedIDLocal = selectedID
         nos = 0
-        samplesArray = bbDdata.samples;
+        samplesArray = bbData.samples;
         samplesArray.forEach(entry => {
             if (selectedIDLocal == samplesArray[nos].id) {
                 sampleValuesAll = samplesArray[nos].sample_values;
@@ -56,6 +59,7 @@ function plotGraphsLoop(selectedID) {
             nos = nos + 1;
         });
 
+        // Declare more variables
         var sampleValuesAll
         var otu_idsAll
         var otu_labelsAll
@@ -64,69 +68,126 @@ function plotGraphsLoop(selectedID) {
         var otu_labelsTop10
 
 
-        // Slice the first 10 objects for plotting
+        // Slice arrays to get the first 10 objects for plotting
         sampleValuesTop10 = sampleValuesAll.slice(0, 10);
         otu_idsTop10 = otu_idsAll.slice(0, 10);
         otu_labelsTop10 = otu_labelsAll.slice(0, 10);
 
+        // Sort and reverse top 10 sample values
         var sampleValuesTop10Sort = sampleValuesTop10.sort((a, b) => b - a);
-        console.log(sampleValuesTop10Sort)
+        sampleValuesTop10Sort.reverse()
+        // console.log(sampleValuesTop10Sort)
 
+        // // Add some text to otu IDs
+        // Declare some more variables
         nos = 0
-        var new_otu_idsTop10
+        var new_otu_idsTop10 = []
+
+        // Run forEach to add some text (OTU) to each otu_id value
         otu_idsTop10.forEach(i => {
-            new_otu_idsTop10 = [...otu_idsTop10, `OTU ${otu_idsTop10[nos]}`,];
-            // new_otu_idsTop10.push(`OTU ${otuid}`);
-            // new_otu_idsTop10 = (`OTU ${otuid}`);
+            new_otu_idsTop10.push(`OTU ${i}`);
+        });
+
+        // Get the wash freq info for guage CharacterData
+        // Declare some more variables
+        var wFreq
+        var metaDataID
+        var wFreqMax = 0
+        selectedIDLocal = selectedID
+        nos = 0
+        metadataArray = bbData.metadata
+
+        // Run forEach to verify ID no, get the wash frequency number (wfreq) and get the max wfreq value to setup guage plot
+        metadataArray.forEach(entry => {
+            if (selectedIDLocal == metadataArray[nos].id) {
+                metaDataID = metadataArray[nos].id
+                wFreq = metadataArray[nos].wfreq
+            };
+            if (wFreqMax < metadataArray[nos].wfreq) {
+                wFreqMax = metadataArray[nos].wfreq
+            };
             nos = nos + 1;
         });
-        console.log(otu_idsTop10)
-        console.log(new_otu_idsTop10)
+        // console.log(wFreqMax)
+        // console.log(metaDataID);
+        // console.log(wFreq);
 
-        // build bar plot
+        // // BUILD PLOTS // // --------------------------------------------------------
+
+        // // build bar plot
         var trace1 = {
             x: sampleValuesTop10Sort,
-            y: otu_idsTop10,
+            y: new_otu_idsTop10,
             type: "bar",
             orientation: 'h',
-
+            marker: {
+                color: '#DE6F62',
+                width: 0.25
+            },
         };
 
-        var data = [trace1];
+        var barData = [trace1];
 
-        var layout = {
-            title: `Top 10 Belly Button bacteria for ${selectedIDLocal} `
-        }
+        var barLayout = {
+            title: `Top 10 Belly Button bacteria for OTU ID${selectedIDLocal} `
+        };
 
-        Plotly.newPlot("bar", data, layout);
+        Plotly.newPlot("bar", barData, barLayout);
 
 
-        // build bubble plot
-        var trace1 = {
+        // // build bubble plot
+        var trace2 = {
             x: otu_idsAll,
             y: sampleValuesAll,
+            text: otu_labelsAll,
             mode: "markers",
             marker: {
-                size: sampleValuesAll,
-                color: 'light blue'
-            }
+                color: sampleValuesAll,
+                size: sampleValuesAll
+            },
         };
 
-        var data = [trace1];
+        var bubbleData = [trace2];
 
-        var layout = {
-            title: `Belly Button bacteria for ${selectedIDLocal}`,
+        var bubbleLayout = {
+            title: `Belly Button bacteria for OTU ID${selectedIDLocal}`,
             showlegend: false,
+            xaxis: { title: "OTU ID" },
+            yaxis: { title: "Sample Values" }
+        };
 
-        }
+        Plotly.newPlot("bubble", bubbleData, bubbleLayout);
 
-        Plotly.newPlot("bubble", data, layout);
+
+        // // build Guage plot
+        var data = [
+            {
+                domain: { x: [0, 1], y: [0, 1] },
+                value: wFreq,
+                title: { text: ` Wash frequency for OTU ID${selectedIDLocal}` },
+                type: "indicator",
+                mode: "gauge+number",
+                gauge: {
+                    axis: { range: [0, wFreqMax + 1] },
+                    steps: [
+                        { range: [0, ((1 / 4) * (wFreqMax + 1))], color: "#4D283D" },
+                        { range: [((1 / 4) * (wFreqMax + 1)), ((2 / 4) * (wFreqMax + 1))], color: "#804265" },
+                        { range: [((2 / 4) * (wFreqMax + 1)), ((3 / 4) * (wFreqMax + 1))], color: "#BF6397" },
+                        { range: [((3 / 4) * (wFreqMax + 1)), ((4 / 4) * (wFreqMax + 1))], color: "#FF85CA" },
+                    ]
+                }
+            }
+        ];
+
+        var layout = { width: 600, height: 500, margin: { t: 0, b: 0 } };
+        Plotly.newPlot("gauge", data, layout);
     });
 };
 
-//     // --------------------------------------------------------
+// // // // ----------------------------------------------------------- // // // // 
+// // // //       EVENT LISTENER FUNCTION TO HANDLE A SELECTION        // // // //
+// // // // ---------------------------------------------------------- // // // //
 
-//  EVENT LISTENER AND TO HANDLE A SELECTION
 // Function to handle a selection
 function optionChanged(selectedID) {
     // d3.event.preventDefault();
@@ -137,19 +198,18 @@ function optionChanged(selectedID) {
     console.log(selectedID)
 }
 
-// Add event listener for submit button
+// Add event listener for submit button - Not needed this time cos it's in the html code
 // d3.select('#selDataset').on('change', handleSelection);
 
-//     // -----------------------------------------------------------------------------------------------------------------------------------------------------
-
-// // TO SETUP AN INITIALIZE FUNCTION THAT'LL POPULATE THE DROPDOWN, SELECT A RANDOM DEFAULT ID AND CALL THE PLOT GRAPH AND METADATA FUNCTIONS TO POPULATE LANDING PAGE
-// // 1ST TRY
+// // // // ------------------------------------------------------------------------------------------------------------------------------------------------------------ // // // // 
+// // TO SETUP AN INITIALIZE FUNCTION THAT'LL POPULATE THE DROPDOWN, SELECT A RANDOM DEFAULT ID AND CALL THE PLOT GRAPH AND METADATA FUNCTIONS TO POPULATE LANDING PAGE // // // // 
+// // // // ----------------------------------------------------------------------------------------------------------------------------------------------------------- // // // //
 function initialize() {
     var selector = d3.select('#selDataset');
 
-    d3.json("data/samples.json").then((bbDdata) => {
+    d3.json("data/samples.json").then((bbData) => {
 
-        var idNames = bbDdata.names;
+        var idNames = bbData.names;
         // console.log(idNames)
 
         idNames.forEach((sample) => {
@@ -176,9 +236,9 @@ initialize()
 // function initialize() {
 //     var selector = document.getElementById(selDataset);
 
-//     d3.json("data/samples.json").then((bbDdata) => {
+//     d3.json("data/samples.json").then((bbData) => {
 
-//         var idNames = bbDdata.names;
+//         var idNames = bbData.names;
 //         console.log(idNames)
 //         for (var i = 0; i < idNames.length; i++) {
 //             var option = document.createElement("OPTION"),
