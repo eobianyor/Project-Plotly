@@ -82,8 +82,12 @@ function plotGraphsLoop(selectedID) {
         // Declare some more variables
         nos = 0
         var new_otu_idsTop10 = []
+        var new_otu_idsAll = []
 
-        // Run forEach to add some text (OTU) to each otu_id value
+        // Run forEach to add some text (OTU) to each otu_id value for all data and for top10
+        otu_idsAll.forEach(i => {
+            new_otu_idsAll.push(`OTU ${i}`);
+        });
         otu_idsTop10.forEach(i => {
             new_otu_idsTop10.push(`OTU ${i}`);
         });
@@ -121,7 +125,7 @@ function plotGraphsLoop(selectedID) {
             type: "bar",
             orientation: 'h',
             marker: {
-                color: '#DE6F62',
+                color: '#DE648F',
                 width: 0.25
             },
         };
@@ -129,7 +133,9 @@ function plotGraphsLoop(selectedID) {
         var barData = [trace1];
 
         var barLayout = {
-            title: `Top 10 Belly Button bacteria for OTU ID${selectedIDLocal} `
+            title: `Top 10 Belly Button bacteria for OTU ID${selectedIDLocal}`,
+            xaxis: { title: "# of Samples" },
+            yaxis: { title: "OTU ID" }
         };
 
         Plotly.newPlot("bar", barData, barLayout);
@@ -153,7 +159,7 @@ function plotGraphsLoop(selectedID) {
             title: `Belly Button bacteria for OTU ID${selectedIDLocal}`,
             showlegend: false,
             xaxis: { title: "OTU ID" },
-            yaxis: { title: "Sample Values" }
+            yaxis: { title: "# of Samples" }
         };
 
         Plotly.newPlot("bubble", bubbleData, bubbleLayout);
@@ -229,30 +235,3 @@ function initialize() {
 }
 
 initialize()
-
-// };
-
-//2ND TRY
-// function initialize() {
-//     var selector = document.getElementById(selDataset);
-
-//     d3.json("data/samples.json").then((bbData) => {
-
-//         var idNames = bbData.names;
-//         console.log(idNames)
-//         for (var i = 0; i < idNames.length; i++) {
-//             var option = document.createElement("OPTION"),
-//                 txt = document.createTextNode(idNames[i]);
-//             option.appendChild(txt);
-//             option.setAttribute("value", idNames[i]);
-//             selector.insertBefore(option, select.lastChild);
-//         };
-//         // Select a sample from your data and call your build charts and metadata functions.
-//         selectedID = idNames[Math.floor(Math.random() * idNames.length)]
-//         plotGraphsLoop(selectedID)
-//         metaDataSearchLoop(selectedID)
-//     });
-
-// };
-
-// initialize();
