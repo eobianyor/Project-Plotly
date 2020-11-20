@@ -12,7 +12,7 @@ var wFreq
 var nos
 
 // // // // ----------------------------------------------------------- // // // // 
-// // // //      FUNCTIONS TO PULL AND LOAD DEMOGRAPHIC INFORMATION    // // // //
+// // // //      FUNCTION TO PULL AND LOAD DEMOGRAPHIC INFORMATION    // // // //
 // // // // ---------------------------------------------------------- // // // // 
 function metaDataSearchLoop(selectedID) {
     d3.json("data/samples.json").then((bbData) => {
@@ -35,9 +35,9 @@ function metaDataSearchLoop(selectedID) {
     });
 };
 
-// // // // --------------------------------// // // // 
-// // // //      FUNCTION TO PLOT GRAPHS    // // // //
-// // // // --------------------------------// // // // 
+// // // // ------------------------------------------------------------- // // // // 
+// // // //      FUNCTION TO GET THE NECESSARY ARRAYS AND PLOT GRAPHS    // // // //
+// // // // ------------------------------------------------------------ // // // // 
 function plotGraphsLoop(selectedID) {
     d3.json("data/samples.json").then((bbData) => {
         // Declare variables 
@@ -207,9 +207,9 @@ function optionChanged(selectedID) {
 // Add event listener for submit button - Not needed this time cos it's in the html code
 // d3.select('#selDataset').on('change', handleSelection);
 
-// // // // ------------------------------------------------------------------------------------------------------------------------------------------------------------ // // // // 
-// // TO SETUP AN INITIALIZE FUNCTION THAT'LL POPULATE THE DROPDOWN, SELECT A RANDOM DEFAULT ID AND CALL THE PLOT GRAPH AND METADATA FUNCTIONS TO POPULATE LANDING PAGE // // // // 
-// // // // ----------------------------------------------------------------------------------------------------------------------------------------------------------- // // // //
+// // // // ------------------------------------------------------------------------------------------------------------------------------------------------------- // // // // 
+// // TO SETUP AN INITIALIZE FUNCTION THAT'LL POPULATE THE DROPDOWN, SELECT A RANDOM DEFAULT ID AND CALL THE PLOT GRAPH AND METADATA FUNCTIONS TO POPULATE LANDING PAGE  // // 
+// // // // ------------------------------------------------------------------------------------------------------------------------------------------------------ // // // //
 function initialize() {
     var selector = d3.select('#selDataset');
 
