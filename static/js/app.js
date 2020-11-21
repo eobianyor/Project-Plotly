@@ -11,9 +11,9 @@ var metadataArray
 var wFreq
 var nos
 
-// // // // ----------------------------------------------------------- // // // // 
+// // // // ========================================================= // // // // 
 // // // //      FUNCTION TO PULL AND LOAD DEMOGRAPHIC INFORMATION    // // // //
-// // // // ---------------------------------------------------------- // // // // 
+// // // // ========================================================= // // // // 
 function metaDataSearchLoop(selectedID) {
     d3.json("data/samples.json").then((bbData) => {
         selectedIDLocal = selectedID
@@ -35,13 +35,14 @@ function metaDataSearchLoop(selectedID) {
     });
 };
 
-// // // // ------------------------------------------------------------- // // // // 
+// // // // ============================================================ // // // // 
 // // // //      FUNCTION TO GET THE NECESSARY ARRAYS AND PLOT GRAPHS    // // // //
-// // // // ------------------------------------------------------------ // // // // 
+// // // // ============================================================ // // // // 
 function plotGraphsLoop(selectedID) {
     d3.json("data/samples.json").then((bbData) => {
         // Declare variables 
         var sampleValuesAll
+        var sampleValuesAll_Twice
         var otu_idsAll
         var otu_labelsAll
         var samplesArray
@@ -53,6 +54,7 @@ function plotGraphsLoop(selectedID) {
         samplesArray.forEach(entry => {
             if (selectedIDLocal == samplesArray[nos].id) {
                 sampleValuesAll = samplesArray[nos].sample_values;
+                sampleValuesAll_Twice = sampleValuesAll * 2
                 otu_idsAll = samplesArray[nos].otu_ids;
                 otu_labelsAll = samplesArray[nos].otu_labels;
             };
@@ -116,7 +118,8 @@ function plotGraphsLoop(selectedID) {
         // console.log(metaDataID);
         // console.log(wFreq);
 
-        // // BUILD PLOTS // // --------------------------------------------------------
+        // // BUILD PLOTS // // 
+        // // =============================================== // //
 
         // // build bar plot
         var trace1 = {
@@ -141,7 +144,8 @@ function plotGraphsLoop(selectedID) {
         Plotly.newPlot("bar", barData, barLayout);
 
 
-        // // build bubble plot
+        // // build bubble plot // //
+        // // =============================================== // //
         var trace2 = {
             x: otu_idsAll,
             y: sampleValuesAll,
@@ -159,13 +163,14 @@ function plotGraphsLoop(selectedID) {
             title: `Belly Button bacteria for OTU ID${selectedIDLocal}`,
             showlegend: false,
             xaxis: { title: "OTU ID" },
-            yaxis: { title: "# of Samples" }
+            yaxis: { title: "# of Samples", range: [0, sampleValuesAll_Twice] }
         };
 
         Plotly.newPlot("bubble", bubbleData, bubbleLayout);
 
 
-        // // build Guage plot
+        // // build Guage plot // //
+        // // =============================================== // //
         var data = [
             {
                 domain: { x: [0, 1], y: [0, 1] },
@@ -190,9 +195,9 @@ function plotGraphsLoop(selectedID) {
     });
 };
 
-// // // // ----------------------------------------------------------- // // // // 
+// // // // ========================================================== // // // // 
 // // // //       EVENT LISTENER FUNCTION TO HANDLE A SELECTION        // // // //
-// // // // ---------------------------------------------------------- // // // //
+// // // // ========================================================== // // // //
 
 // Function to handle a selection
 function optionChanged(selectedID) {
@@ -207,9 +212,9 @@ function optionChanged(selectedID) {
 // Add event listener for submit button - Not needed this time cos it's in the html code
 // d3.select('#selDataset').on('change', handleSelection);
 
-// // // // ------------------------------------------------------------------------------------------------------------------------------------------------------- // // // // 
+// // // // ====================================================================================================================================================== // // // // 
 // // TO SETUP AN INITIALIZE FUNCTION THAT'LL POPULATE THE DROPDOWN, SELECT A RANDOM DEFAULT ID AND CALL THE PLOT GRAPH AND METADATA FUNCTIONS TO POPULATE LANDING PAGE  // // 
-// // // // ------------------------------------------------------------------------------------------------------------------------------------------------------ // // // //
+// // // // ====================================================================================================================================================== // // // //
 function initialize() {
     var selector = d3.select('#selDataset');
 
