@@ -1,2 +1,2 @@
 # Project-Plotly
-Data Vizualization project using 
+Data Visualization project using JavaScript, CSS and Html to create a webapp to visualize dataset.
